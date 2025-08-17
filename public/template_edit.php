@@ -76,12 +76,13 @@ if ($_SERVER['REQUEST_METHOD']==='POST') {
 <script src="https://cdn.jsdelivr.net/npm/formeo@latest/dist/formeo.min.js"></script>
 <script>
 const editor = new window.FormeoEditor({container: '#formeo-editor'});
-let existing = <?=json_encode($template['schema_json'] ? json_decode($template['schema_json'], true) : new stdClass())?>;
+let existing = JSON.parse(<?= json_encode($template['schema_json'] ?: '{}') ?>);
 if (existing && Object.keys(existing).length) {
     editor.setData(existing);
 }
 document.querySelector('form').addEventListener('submit', function(){
-    document.getElementById('schema_json').value = JSON.stringify(editor.formData);
+    const data = editor.getFormData ? editor.getFormData() : editor.formData;
+    document.getElementById('schema_json').value = JSON.stringify(data || {});
 });
 </script>
 </body>
